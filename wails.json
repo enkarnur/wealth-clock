@@ -1,0 +1,14 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "wealth-clock",
+  "outputfilename": "wealth-clock",
+  "frontend:dir": "app/frontend",
+  "frontend:install": "pnpm install --frozen-lockfile",
+  "frontend:build": "pnpm run build",
+  "frontend:dev:watcher": "pnpm dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "恩卡尔·努尔",
+    "email": "enkaernuer@bytedance.com"
+  }
+}

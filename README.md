@@ -18,6 +18,7 @@
 
 - 前端：React + Vite + TypeScript + Arco Design
 - 后端：Go + net/http
+- 桌面封装：Wails v2
 - 数据库：SQLite
 - 接口说明：`app/api/api.yaml`
 
@@ -57,31 +58,67 @@ pnpm run build
 后端：
 
 ```bash
-go build ./...
+go build ./app/server-go
 ```
+
+### 4. 桌面版开发与构建
+
+先安装 Wails CLI：
+
+```bash
+go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.1
+```
+
+开发模式：
+
+```bash
+wails dev
+```
+
+本地桌面构建：
+
+```bash
+wails build -clean
+```
+
+桌面版会把数据默认存到当前用户系统配置目录下的 `wealth-clock` 目录中；如需自定义位置，可设置 `WEALTH_CLOCK_DATA_DIR`。
 
 ## GitHub Actions
 
-仓库已内置 GitHub Actions 持续集成流程：
+仓库已内置两套 GitHub Actions：
 
-- 前端：安装依赖、运行 Vitest、执行生产构建
-- 后端：在 Ubuntu / macOS / Windows 三个平台执行 `go build ./...`
-- 冒烟检查：启动服务并验证 `/api/settings` 与首页 HTML 是否正常返回
+- `ci.yml`：前端测试与构建、后端多平台编译、基础冒烟检查
+- `desktop-build.yml`：桌面版构建与发布
 
-工作流文件：`.github/workflows/ci.yml`
+桌面版工作流使用方式：
+
+- **手动构建**：在 GitHub Actions 页面手动触发 `Desktop Build`
+- **自动发布**：推送 tag（例如 `v0.1.0`）后，会自动构建 Windows / macOS / Linux 桌面产物并附加到 GitHub Release
+
+给别人安装时，推荐直接发 GitHub Release 页面：
+
+1. 创建并推送版本 tag，例如 `git tag v0.1.0 && git push origin v0.1.0`
+2. 等待 `Desktop Build` 工作流完成
+3. 在 Releases 页面下载对应平台产物
+4. 把下载链接发给使用者安装
 
 ## 目录结构
 
 ```text
+.github/workflows/       # CI 与桌面构建工作流
 app/
 ├─ api/                 # API 说明
 ├─ dist/                # 前端构建产物（构建后生成）
 ├─ frontend/            # React 前端
 │  └─ src/
 │     ├─ api/           # 前端请求封装
-│     ├─ lib/           # 通用 hooks / 提示工具
+│     ├─ lib/           # 通用 hooks / 桌面桥接
 │     └─ pages/         # 首页与设置页
-└─ server-go/           # Go 服务与 SQLite 存储
+└─ server-go/           # Web 模式下的 Go 服务与 SQLite 存储
+build/                  # Wails 桌面打包资源
+internal/backend/       # 桌面版复用的内嵌 API 服务
+main.go                 # Wails 桌面入口
+wails.json              # Wails 构建配置
 ```
 
 ## 截图

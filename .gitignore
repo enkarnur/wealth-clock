@@ -1,4 +1,8 @@
 node_modules/
+app/frontend/node_modules/
+app/frontend/package.json.md5
+app/frontend/wailsjs/
+/frontend/
 dist/
 coverage/
 .vite/
@@ -7,3 +11,6 @@ coverage/
 *.db-*
 data/
 app/dist/
+build/bin/
+/server-go
+/wealth-clock

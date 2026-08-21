@@ -4,6 +4,7 @@ import { ArrowLeft, ImagePlus, RefreshCw, Save, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { settingsList, settingsUpdate, type SalarySettings } from '../../api/client.gen';
 import { showMessage, useApiData, useText } from '../../lib/runtime';
+import { applyWindowPreferences, isDesktopRuntime } from '../../lib/desktop';
 import styles from './index.module.css';
 
 const messages = {
@@ -38,9 +39,11 @@ const messages = {
   imageHint: '支持 JPG、PNG、WebP，最大 2 MB。',
   pin: '偏好保持置顶',
   pinHint: '是否真正置顶取决于桌面容器是否支持。',
+  pinHintDesktop: '桌面版会在保存后立即应用置顶偏好。',
   save: '保存设置',
   saving: '保存中…',
   saved: '设置已保存',
+  desktopApplied: '桌面窗口偏好已立即应用',
   saveFailed: '保存失败，请重试',
   loadFailed: '无法加载设置',
   retry: '重试',
@@ -120,7 +123,8 @@ export default function SettingsPage() {
         alwaysOnTop: form.alwaysOnTop,
       });
       setForm(response.data);
-      showMessage(t.saved, 'success');
+      const applied = applyWindowPreferences({ alwaysOnTop: response.data.alwaysOnTop });
+      showMessage(applied ? t.desktopApplied : t.saved, 'success');
       navigate('/');
     } catch {
       showMessage(t.saveFailed, 'error');
@@ -189,7 +193,7 @@ export default function SettingsPage() {
                 <p className={styles.fileMeta}>{t.imageHint}</p>
               </div>
               <div className={styles.switchRow}>
-                <div><div className={styles.label}>{t.pin}</div><p className={styles.hint}>{t.pinHint}</p></div>
+                <div><div className={styles.label}>{t.pin}</div><p className={styles.hint}>{isDesktopRuntime() ? t.pinHintDesktop : t.pinHint}</p></div>
                 <Switch checked={form.alwaysOnTop} onChange={(value) => update('alwaysOnTop', value)} />
               </div>
             </section>
