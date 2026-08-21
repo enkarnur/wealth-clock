@@ -1,5 +1,7 @@
 # 财富时钟
 
+![CI](https://github.com/enkarnur/wealth-clock/actions/workflows/ci.yml/badge.svg)
+
 一个给自己用、也适合放在桌面常驻的小工具：实时查看今天已经赚了多少钱，顺手记几笔支出，再看看这个月离存钱目标还有多远。
 
 作者：**恩卡尔·努尔（[@enkarnur](https://github.com/enkarnur)）**
@@ -57,6 +59,16 @@ pnpm run build
 ```bash
 go build ./...
 ```
+
+## GitHub Actions
+
+仓库已内置 GitHub Actions 持续集成流程：
+
+- 前端：安装依赖、运行 Vitest、执行生产构建
+- 后端：在 Ubuntu / macOS / Windows 三个平台执行 `go build ./...`
+- 冒烟检查：启动服务并验证 `/api/settings` 与首页 HTML 是否正常返回
+
+工作流文件：`.github/workflows/ci.yml`
 
 ## 目录结构
 
