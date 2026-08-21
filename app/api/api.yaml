@@ -1,0 +1,58 @@
+# 财富时钟 API 说明
+version: "1"
+
+resources:
+  - name: settings
+    model:
+      salaryType: string
+      salaryAmount: number
+      workStart: string
+      lunchStart: string
+      lunchEnd: string
+      workEnd: string
+      weeklyWorkDays: number
+      workDays: "number[]"
+      savingsGoal: number
+      backgroundImage: string
+      alwaysOnTop: boolean
+      configured: boolean
+      updatedAt: string
+    routes:
+      - method: GET
+        path: /api/settings
+        summary: 获取工资、工时、目标与桌面偏好设置
+      - method: PUT
+        path: /api/settings
+        summary: 保存工资、工时、工作日、目标与背景设置
+
+  - name: dashboard
+    model:
+      month: string
+      expectedIncome: number
+      expenses: number
+      net: number
+      savingsGoal: number
+      savingsProgress: number
+    routes:
+      - method: GET
+        path: /api/dashboard
+        summary: 获取指定月份的预计收入、支出、净额与存钱进度
+
+  - name: expenses
+    model:
+      id: string
+      amount: number
+      category: string
+      note: string
+      spentAt: string
+      createdAt: string
+    routes:
+      - method: GET
+        path: /api/expenses
+        summary: 按月份列出支出记录
+      - method: POST
+        path: /api/expenses
+        summary: 新增支出记录
+      - method: DELETE
+        path: /api/expenses/{id}
+        summary: 删除一条支出记录

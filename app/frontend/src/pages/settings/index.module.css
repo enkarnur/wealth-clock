@@ -1,0 +1,106 @@
+.page {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+}
+
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0;
+}
+
+.subtitle, .hint, .fileMeta {
+  margin: 4px 0 0;
+  color: #667085;
+}
+
+.panel, .error {
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+}
+
+.panel {
+  padding: 24px;
+}
+
+.form, .section, .grid, .timeGrid {
+  display: grid;
+  gap: 18px;
+}
+
+.grid, .timeGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.fileRow, .switchRow, .actions, .error {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.switchRow, .actions {
+  justify-content: space-between;
+}
+
+.preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.error {
+  justify-content: space-between;
+  padding: 18px 20px;
+}
+
+@media (max-width: 768px) {
+  .shell {
+    padding: 20px 14px 36px;
+  }
+
+  .grid, .timeGrid, .days {
+    grid-template-columns: 1fr;
+  }
+
+  .fileRow, .switchRow, .actions, .error {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
