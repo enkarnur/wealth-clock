@@ -120,5 +120,7 @@ jobs:
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: release-artifacts/**/*
+          files: |
+            release-artifacts/**/*.zip
+            release-artifacts/**/*.tar.gz
           generate_release_notes: true
