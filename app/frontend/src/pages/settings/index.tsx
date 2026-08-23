@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button, Checkbox, InputNumber, Radio, Skeleton, Switch, TimePicker, Upload } from '@arco-design/web-react';
-import { ArrowLeft, ImagePlus, RefreshCw, Save, Trash2 } from 'lucide-react';
+import { ArrowLeft, ImagePlus, Maximize2, RefreshCw, Save, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { settingsList, settingsUpdate, type SalarySettings } from '../../api/client.gen';
 import { showMessage, useApiData, useText } from '../../lib/runtime';
-import { applyWindowPreferences, isDesktopRuntime } from '../../lib/desktop';
+import { applyWindowPreferences, desktopWindowPresets, isDesktopRuntime, resizeDesktopWindow } from '../../lib/desktop';
 import styles from './index.module.css';
 
 const messages = {
@@ -40,6 +40,10 @@ const messages = {
   pin: '偏好保持置顶',
   pinHint: '是否真正置顶取决于桌面容器是否支持。',
   pinHintDesktop: '桌面版会在保存后立即应用置顶偏好。',
+  windowSize: '调整窗口大小',
+  windowSizeHint: '桌面版可一键切换窗口尺寸，也可以拖动窗口边缘自由调整。',
+  windowSizeUnavailable: '当前环境不支持调整窗口，请在桌面版中使用。',
+  windowSizeApplied: '窗口大小已调整',
   save: '保存设置',
   saving: '保存中…',
   saved: '设置已保存',
@@ -96,6 +100,11 @@ export default function SettingsPage() {
     reader.onerror = () => showMessage(t.invalidImage, 'error');
     reader.readAsDataURL(file);
     return false;
+  };
+
+  const resizeWindow = (width: number, height: number) => {
+    const applied = resizeDesktopWindow(width, height);
+    showMessage(applied ? t.windowSizeApplied : t.windowSizeUnavailable, applied ? 'success' : 'warning');
   };
 
   const save = async () => {
@@ -195,6 +204,16 @@ export default function SettingsPage() {
               <div className={styles.switchRow}>
                 <div><div className={styles.label}>{t.pin}</div><p className={styles.hint}>{isDesktopRuntime() ? t.pinHintDesktop : t.pinHint}</p></div>
                 <Switch checked={form.alwaysOnTop} onChange={(value) => update('alwaysOnTop', value)} />
+              </div>
+              <div className={styles.field}>
+                <div><div className={styles.label}>{t.windowSize}</div><p className={styles.hint}>{t.windowSizeHint}</p></div>
+                <div className={styles.windowButtons}>
+                  {desktopWindowPresets.map((preset) => (
+                    <Button key={preset.label} icon={<Maximize2 size={16} />} onClick={() => resizeWindow(preset.width, preset.height)}>
+                      {preset.label} · {preset.width}×{preset.height}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </section>
 
