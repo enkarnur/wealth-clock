@@ -75,8 +75,22 @@ jobs:
       - name: Package macOS artifact
         if: runner.os == 'macOS'
         run: |
-          mkdir -p release
-          ditto -c -k --sequesterRsrc --keepParent build/bin/wealth-clock.app release/${{ matrix.artifact }}.zip
+          mkdir -p release/${{ matrix.artifact }}
+          codesign --force --deep --sign - build/bin/wealth-clock.app
+          cp -R build/bin/wealth-clock.app release/${{ matrix.artifact }}/
+          cat > release/${{ matrix.artifact }}/README-macOS.txt <<'EOF'
+          财富时钟 macOS 版
+
+          如果双击提示“无法验证开发者”或“已损坏”：
+          1. 先把 wealth-clock.app 拖到“应用程序”文件夹。
+          2. 右键点击 wealth-clock.app，选择“打开”。
+          3. 如果仍提示已损坏，请打开“终端”执行：
+             xattr -dr com.apple.quarantine /Applications/wealth-clock.app
+          4. 再右键打开一次。
+
+          这是未上架、未公证的个人构建包导致的系统拦截，不是文件真的损坏。
+          EOF
+          ditto -c -k --sequesterRsrc --keepParent release/${{ matrix.artifact }} release/${{ matrix.artifact }}.zip
 
       - name: Package Windows artifact
         if: runner.os == 'Windows'
