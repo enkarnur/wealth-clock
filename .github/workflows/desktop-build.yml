@@ -54,6 +54,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
 
+      - name: Build frontend once for Wails bindings
+        working-directory: app/frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.1
 
