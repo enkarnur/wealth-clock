@@ -12,6 +12,7 @@
 - **轻量记账**：快速记录每日支出，按月份汇总查看
 - **存钱目标**：对比预计收入、累计支出与月度目标，直观看净结余进度
 - **桌面友好**：支持背景图与置顶偏好，适合做成桌面小面板
+- **安卓可安装**：新增 Android APK 打包能力，下载后可直接安装到手机
 - **本地数据保存**：使用 SQLite 存储设置和账单记录
 
 ## 技术栈
@@ -19,6 +20,7 @@
 - 前端：React + Vite + TypeScript + Arco Design
 - 后端：Go + net/http
 - 桌面封装：Wails v2
+- 移动封装：Capacitor Android
 - 数据库：SQLite
 - 接口说明：`app/api/api.yaml`
 
@@ -83,17 +85,46 @@ wails build -clean
 
 桌面版会把数据默认存到当前用户系统配置目录下的 `wealth-clock` 目录中；如需自定义位置，可设置 `WEALTH_CLOCK_DATA_DIR`。
 
+### 5. Android 开发与 APK 构建
+
+先安装前端依赖并同步 Android 工程：
+
+```bash
+cd app/frontend
+pnpm install
+pnpm run android:sync
+```
+
+如需本地打开 Android 工程：
+
+```bash
+cd app/frontend
+pnpm run android:open
+```
+
+说明：
+
+- Android 版会复用现有 React 界面
+- 手机端不依赖 Go 服务，设置与记账记录保存在当前手机本地存储中
+- GitHub Actions 会自动构建可下载安装的 APK
+
 ## GitHub Actions
 
-仓库已内置两套 GitHub Actions：
+仓库已内置三套 GitHub Actions：
 
 - `ci.yml`：前端测试与构建、后端多平台编译、基础冒烟检查
 - `desktop-build.yml`：桌面版构建与发布
+- `android-build.yml`：Android APK 构建与发布
 
 桌面版工作流使用方式：
 
 - **手动构建**：在 GitHub Actions 页面手动触发 `Desktop Build`
 - **自动发布**：推送 tag（例如 `v0.1.0`）后，会自动构建 Windows / macOS / Linux 桌面产物并附加到 GitHub Release
+
+Android 工作流使用方式：
+
+- **手动构建**：在 GitHub Actions 页面手动触发 `Android Build`
+- **自动发布**：推送 tag 后，会自动构建 `wealth-clock-android.apk` 并附加到 GitHub Release
 
 给别人安装时，推荐直接发 GitHub Release 页面：
 
@@ -105,15 +136,17 @@ wails build -clean
 ## 目录结构
 
 ```text
-.github/workflows/       # CI 与桌面构建工作流
+.github/workflows/       # CI、桌面构建与 Android APK 构建工作流
 app/
 ├─ api/                 # API 说明
 ├─ dist/                # 前端构建产物（构建后生成）
-├─ frontend/            # React 前端
-│  └─ src/
-│     ├─ api/           # 前端请求封装
-│     ├─ lib/           # 通用 hooks / 桌面桥接
-│     └─ pages/         # 首页与设置页
+├─ frontend/            # React 前端 + Capacitor Android 工程
+│  ├─ android/          # Android 原生工程
+│  ├─ src/
+│  │  ├─ api/           # 前端请求封装与移动端本地数据适配
+│  │  ├─ lib/           # 通用 hooks / 平台检测 / 桌面桥接
+│  │  └─ pages/         # 首页与设置页
+│  └─ capacitor.config.ts
 └─ server-go/           # Web 模式下的 Go 服务与 SQLite 存储
 build/                  # Wails 桌面打包资源
 internal/backend/       # 桌面版复用的内嵌 API 服务

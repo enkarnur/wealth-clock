@@ -25,10 +25,16 @@
   color: #667085;
 }
 
-.panel, .error {
+.panel, .error, .mobileHint {
   border-radius: 24px;
   background: #fff;
   box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+}
+
+.mobileHint {
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  color: #475467;
 }
 
 .panel {

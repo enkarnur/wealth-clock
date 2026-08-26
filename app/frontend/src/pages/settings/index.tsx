@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { settingsList, settingsUpdate, type SalarySettings } from '../../api/client.gen';
 import { showMessage, useApiData, useText } from '../../lib/runtime';
 import { applyWindowPreferences, desktopWindowPresets, isDesktopRuntime, resizeDesktopWindow } from '../../lib/desktop';
+import { isNativeMobileApp } from '../../lib/platform';
 import styles from './index.module.css';
 
 const messages = {
@@ -57,6 +58,7 @@ const messages = {
   invalidDays: '具体工作日数量需与每周工作天数一致',
   invalidImage: '请选择不超过 2 MB 的 JPG、PNG 或 WebP 图片',
   imageReady: '背景照片已载入',
+  localModeHint: '安卓版会把设置和记账记录保存在当前手机本地。',
 };
 
 type LoadResult = { settings?: SalarySettings; error?: string };
@@ -74,6 +76,7 @@ export default function SettingsPage() {
   }, []);
   const [form, setForm] = useState<SalarySettings | null>(null);
   const [saving, setSaving] = useState(false);
+  const nativeMobile = isNativeMobileApp();
 
   useEffect(() => {
     if (data?.settings) setForm(data.settings);
@@ -163,6 +166,7 @@ export default function SettingsPage() {
           <Button type="text" icon={<ArrowLeft size={18} />} onClick={() => navigate('/')} aria-label={t.back} />
           <div className={styles.titleGroup}><h1 className={styles.title}>{t.title}</h1><p className={styles.subtitle}>{t.subtitle}</p></div>
         </header>
+        {nativeMobile ? <div className={styles.mobileHint}>{t.localModeHint}</div> : null}
 
         <div className={styles.panel}>
           <div className={styles.form}>
@@ -195,26 +199,30 @@ export default function SettingsPage() {
               <div className={styles.field}>
                 <span className={styles.label}>{t.background}</span>
                 <div className={styles.fileRow}>
-                  {form.backgroundImage && <img className={styles.preview} src={form.backgroundImage} alt="" />}
+                  {form.backgroundImage ? <img className={styles.preview} src={form.backgroundImage} alt="" /> : null}
                   <Upload accept="image/jpeg,image/png,image/webp" showUploadList={false} beforeUpload={loadImage}><Button icon={<ImagePlus size={16} />}>{t.chooseImage}</Button></Upload>
-                  {form.backgroundImage && <Button type="text" status="danger" icon={<Trash2 size={16} />} onClick={() => update('backgroundImage', '')}>{t.removeImage}</Button>}
+                  {form.backgroundImage ? <Button type="text" status="danger" icon={<Trash2 size={16} />} onClick={() => update('backgroundImage', '')}>{t.removeImage}</Button> : null}
                 </div>
                 <p className={styles.fileMeta}>{t.imageHint}</p>
               </div>
-              <div className={styles.switchRow}>
-                <div><div className={styles.label}>{t.pin}</div><p className={styles.hint}>{isDesktopRuntime() ? t.pinHintDesktop : t.pinHint}</p></div>
-                <Switch checked={form.alwaysOnTop} onChange={(value) => update('alwaysOnTop', value)} />
-              </div>
-              <div className={styles.field}>
-                <div><div className={styles.label}>{t.windowSize}</div><p className={styles.hint}>{t.windowSizeHint}</p></div>
-                <div className={styles.windowButtons}>
-                  {desktopWindowPresets.map((preset) => (
-                    <Button key={preset.label} icon={<Maximize2 size={16} />} onClick={() => resizeWindow(preset.width, preset.height)}>
-                      {preset.label} · {preset.width}×{preset.height}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              {!nativeMobile && (
+                <>
+                  <div className={styles.switchRow}>
+                    <div><div className={styles.label}>{t.pin}</div><p className={styles.hint}>{isDesktopRuntime() ? t.pinHintDesktop : t.pinHint}</p></div>
+                    <Switch checked={form.alwaysOnTop} onChange={(value) => update('alwaysOnTop', value)} />
+                  </div>
+                  <div className={styles.field}>
+                    <div><div className={styles.label}>{t.windowSize}</div><p className={styles.hint}>{t.windowSizeHint}</p></div>
+                    <div className={styles.windowButtons}>
+                      {desktopWindowPresets.map((preset) => (
+                        <Button key={preset.label} icon={<Maximize2 size={16} />} onClick={() => resizeWindow(preset.width, preset.height)}>
+                          {preset.label} · {preset.width}×{preset.height}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </section>
 
             <div className={styles.actions}>

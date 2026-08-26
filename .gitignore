@@ -12,5 +12,9 @@ coverage/
 data/
 app/dist/
 build/bin/
+app/frontend/android/.gradle/
+app/frontend/android/build/
+app/frontend/android/app/build/
+app/frontend/android/local.properties
 /server-go
 /wealth-clock

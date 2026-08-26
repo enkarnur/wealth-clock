@@ -7,16 +7,21 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "android:sync": "pnpm run build && cap sync android",
+    "android:open": "cap open android"
   },
   "dependencies": {
     "@arco-design/web-react": "^2.56.0",
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.4.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.0",
     "@testing-library/react": "16.3.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
